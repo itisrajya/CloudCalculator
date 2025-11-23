@@ -1,0 +1,62 @@
+﻿@page "/optimization"
+
+<h3>Gradient Descent Optimization</h3>
+
+<div class="card p-3">
+
+    <div class="mb-3">
+        <label class="form-label">Initial X</label>
+        <input class="form-control" @bind="InitialX" />
+    </div>
+
+    <div class="mb-3">
+        <label class="form-label">Learning Rate</label>
+        <input class="form-control" @bind="LearningRate" />
+    </div>
+
+    <button class="btn btn-primary" @onclick="RunOptimization">Run Gradient Descent</button>
+
+    @if (Steps?.Any() == true)
+    {
+        <div class="mt-3">
+            <h5>Iterations</h5>
+            <ul class="list-group">
+                @foreach (var s in Steps)
+                {
+                    <li class="list-group-item">Iteration @s.Iteration → x = @s.X</li>
+                }
+            </ul>
+
+            <div class="alert alert-info mt-3">
+                <b>Minimum Approximated at x = @Steps.Last().X</b>
+            </div>
+        </div>
+    }
+</div>
+
+@code {
+    public double InitialX { get; set; } = 5;
+    public double LearningRate { get; set; } = 0.1;
+
+    public List<Step>? Steps { get; set; }
+
+    private void RunOptimization()
+    {
+        Steps = new List<Step>();
+        double x = InitialX;
+
+        for (int i = 0; i < 20; i++)
+        {
+            double gradient = 2 * x;
+            x = x - LearningRate * gradient;
+
+            Steps.Add(new Step { Iteration = i + 1, X = Math.Round(x, 4) });
+        }
+    }
+
+    public class Step
+    {
+        public int Iteration { get; set; }
+        public double X { get; set; }
+    }
+}

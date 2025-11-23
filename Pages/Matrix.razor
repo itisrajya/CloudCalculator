@@ -1,0 +1,83 @@
+﻿@page "/matrix"
+
+@inject CloudCalculator.Services.MatrixService MatrixService
+
+<h3>Matrix Multiplication</h3>
+
+<p>Enter matrices as rows separated by semicolons `;` and columns by spaces.</p>
+<p>Example: <b>1 2; 3 4</b></p>
+
+<div>
+    <label>Matrix A</label>
+    <textarea @bind="MatrixA" rows="4" class="form-control"></textarea>
+</div>
+
+<div>
+    <label>Matrix B</label>
+    <textarea @bind="MatrixB" rows="4" class="form-control"></textarea>
+</div>
+
+<button class="btn btn-primary mt-2" @onclick="Compute">Compute</button>
+
+@if (Result != null)
+{
+    <h4>Result:</h4>
+    <pre>@Result</pre>
+}
+
+@code {
+    string MatrixA = "";
+    string MatrixB = "";
+    string? Result;
+
+    private async Task Compute()
+    {
+        try
+        {
+            var A = ParseMatrix(MatrixA);
+            var B = ParseMatrix(MatrixB);
+
+            var res = MatrixService.Multiply(A, B);
+
+            Result = MatrixToText(res);
+        }
+        catch (Exception ex)
+        {
+            Result = "Error: " + ex.Message;
+        }
+    }
+
+    double[,] ParseMatrix(string text)
+    {
+        var rows = text.Split(';');
+        int rowCount = rows.Length;
+        int colCount = rows[0].Trim().Split(' ').Length;
+
+        double[,] matrix = new double[rowCount, colCount];
+
+        for (int i = 0; i < rowCount; i++)
+        {
+            var cols = rows[i].Trim().Split(' ', StringSplitOptions.RemoveEmptyEntries);
+            for (int j = 0; j < colCount; j++)
+                matrix[i, j] = double.Parse(cols[j]);
+        }
+
+        return matrix;
+    }
+
+    string MatrixToText(double[,] m)
+    {
+        var sb = new System.Text.StringBuilder();
+
+        for (int i = 0; i < m.GetLength(0); i++)
+        {
+            for (int j = 0; j < m.GetLength(1); j++)
+            {
+                sb.Append(m[i, j]).Append(" ");
+            }
+            sb.AppendLine();
+        }
+
+        return sb.ToString();
+    }
+}

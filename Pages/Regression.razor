@@ -1,0 +1,67 @@
+﻿@page "/regression"
+
+<h3>Linear Regression</h3>
+
+<div class="card p-3 mt-3">
+    <div class="mb-3">
+        <label class="form-label">X Values (comma separated)</label>
+        <input class="form-control" @bind="XValues" placeholder="e.g., 1,2,3,4" />
+    </div>
+
+    <div class="mb-3">
+        <label class="form-label">Y Values (comma separated)</label>
+        <input class="form-control" @bind="YValues" placeholder="e.g., 3,4,2,5" />
+    </div>
+
+    <button class="btn btn-primary" @onclick="ComputeRegression">Compute Regression</button>
+
+    @if (Result != null)
+    {
+        <div class="alert alert-success mt-3">
+            <h5>Result</h5>
+            <p><b>Equation:</b> y = @Result.Slope m + @Result.Intercept</p>
+            <p><b>Slope (m):</b> @Result.Slope</p>
+            <p><b>Intercept (b):</b> @Result.Intercept</p>
+        </div>
+    }
+</div>
+
+@code {
+    public string? XValues { get; set; }
+    public string? YValues { get; set; }
+
+    public RegressionResult? Result { get; set; }
+
+    private void ComputeRegression()
+    {
+        var x = XValues?.Split(',').Select(double.Parse).ToList() ?? [];
+        var y = YValues?.Split(',').Select(double.Parse).ToList() ?? [];
+
+        if (x.Count != y.Count || x.Count < 2)
+            return;
+
+        int n = x.Count;
+
+        double sumX = x.Sum();
+        double sumY = y.Sum();
+        double sumXY = x.Zip(y, (a, b) => a * b).Sum();
+        double sumX2 = x.Sum(v => v * v);
+
+        double slope = (n * sumXY - sumX * sumY)
+                     / (n * sumX2 - sumX * sumX);
+
+        double intercept = (sumY - slope * sumX) / n;
+
+        Result = new RegressionResult
+        {
+            Slope = Math.Round(slope, 4),
+            Intercept = Math.Round(intercept, 4)
+        };
+    }
+
+    public class RegressionResult
+    {
+        public double Slope { get; set; }
+        public double Intercept { get; set; }
+    }
+}

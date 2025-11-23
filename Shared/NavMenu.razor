@@ -1,0 +1,53 @@
+﻿<div class="top-row ps-3 navbar navbar-dark">
+    <div class="container-fluid">
+        <a class="navbar-brand" href="">CloudCalculator</a>
+        <button title="Navigation menu" class="navbar-toggler" @onclick="ToggleNavMenu">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+    </div>
+</div>
+
+<div class="@NavMenuCssClass" @onclick="ToggleNavMenu">
+    <nav class="flex-column">
+
+        <!-- Home -->
+        <div class="nav-item px-3">
+            <NavLink class="nav-link" href="" Match="NavLinkMatch.All">
+                <span class="oi oi-home"></span> Home
+            </NavLink>
+        </div>
+
+        <!-- Matrix Multiplication -->
+        <div class="nav-item px-3">
+            <NavLink class="nav-link" href="matrix">
+                <span class="oi oi-calculator"></span> Matrix Multiplication
+            </NavLink>
+        </div>
+
+        <!-- Regression (future) -->
+        <div class="nav-item px-3">
+            <NavLink class="nav-link" href="regression">
+                <span class="oi oi-graph"></span> Regression
+            </NavLink>
+        </div>
+
+        <!-- Optimization (future) -->
+        <div class="nav-item px-3">
+            <NavLink class="nav-link" href="optimization">
+                <span class="oi oi-target"></span> Optimization
+            </NavLink>
+        </div>
+
+    </nav>
+</div>
+
+@code {
+    private bool collapseNavMenu = true;
+
+    private string? NavMenuCssClass => collapseNavMenu ? "collapse" : null;
+
+    private void ToggleNavMenu()
+    {
+        collapseNavMenu = !collapseNavMenu;
+    }
+}
